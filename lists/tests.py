@@ -3,12 +3,13 @@ from django.test import TestCase
 from django.http import HttpRequest
 from django.template.loader import render_to_string
 from lists.views import home_page
+from lists.models import Item
 import re
 
-def remove_csrf_token_from_response(response):
-    return re.sub('<input type=\'hidden\' name=\'csrfmiddlewaretoken\'.*/>', '', response)
-
 class HomePageTest(TestCase):
+
+    def remove_csrf_token_from_response(self, response):
+        return re.sub('<input type=\'hidden\' name=\'csrfmiddlewaretoken\'.*/>', '', response)
     
     def test_root_url_resolved_to_home_page_view(self):
         found = resolve('/')
@@ -18,7 +19,7 @@ class HomePageTest(TestCase):
         request = HttpRequest()
         
         response = home_page(request)
-        response = remove_csrf_token_from_response(response.content.decode())        
+        response = self.remove_csrf_token_from_response(response.content.decode())        
         
         expected_html = render_to_string('home.html')        
         self.assertEqual(response, expected_html)        
@@ -29,10 +30,30 @@ class HomePageTest(TestCase):
         request.POST['item_text'] = 'A new list item'
         
         response = home_page(request)
-        response = remove_csrf_token_from_response(response.content.decode())
+        response = self.remove_csrf_token_from_response(response.content.decode())
         
         self.assertIn('A new list item', response)
         expected_html = render_to_string('home.html',
                                          {'new_item_text' : 'A new list item'})
         self.assertEqual(response, expected_html)
+
+class ItemModelTest(TestCase):
+    
+    def save_item(self, item_text):
+        item = Item()
+        item.text = item_text
+        item.save()    
+        
+    def test_saving_and_retrieving_items(self):
+        self.save_item('The first (ever) list item')
+        self.save_item('Item the second')
+        
+        saved_items = Item.objects.all()
+        self.assertEqual(saved_items.count(), 2)
+        
+        first_saved_item = saved_items[0]
+        second_saved_item = saved_items[1]
+        
+        self.assertEqual(first_saved_item.text, 'The first (ever) list item')
+        self.assertEqual(second_saved_item.text, 'Item the second')
         
