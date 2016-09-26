@@ -4,7 +4,7 @@ import unittest
 class NewVisitorTest(unittest.TestCase):       
     
     def setUp(self):
-        self.browser = webdriver.Chrome()
+        self.browser = webdriver.Chrome(r'C:\Projects\Goat\superlists\tests\functional_tests\chromedriver.exe')
         self.browser.implicitly_wait(3)
     
     def tearDown(self):
