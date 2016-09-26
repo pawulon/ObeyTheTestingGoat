@@ -1,11 +1,15 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest
+import os
+
+dir = os.path.dirname(__file__)
+chromedriver_path = os.path.join(dir, 'chromedriver.exe')
 
 class NewVisitorTest(unittest.TestCase):       
     
     def setUp(self):
-        self.browser = webdriver.Chrome(r'C:\Projects\Goat\superlists\tests\functional_tests\chromedriver.exe')
+        self.browser = webdriver.Chrome(chromedriver_path)
         self.browser.implicitly_wait(3)
     
     def tearDown(self):
