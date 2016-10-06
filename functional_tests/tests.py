@@ -28,8 +28,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.browser = webdriver.Chrome(chromedriver_path)
         self.browser.implicitly_wait(3)
     
-    def tearDown(self):
-        print('teary leco')
+    def tearDown(self):        
         self.browser.quit()
 
     def check_for_row_in_list_table(self, searched_text):
