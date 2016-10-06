@@ -11,17 +11,19 @@ chromedriver_path = os.path.join(dir, 'chromedriver.exe')
 class NewVisitorTest(StaticLiveServerTestCase):
     
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls):        
         for arg in sys.argv:
             if 'liveserver' in arg:
+                cls.is_live_server = True
                 cls.server_url = 'http://' + arg.split('=')[1]
                 return
-        super().setUpClass()
+        super().setUpClass()        
+        cls.is_live_server = False
         cls.server_url = cls.live_server_url
 
     @classmethod
     def tearDownClass(cls):
-        if cls.server_url == cls.live_server_url:
+        if not cls.is_live_server:
             super().tearDownClass()
         
     def setUp(self):
