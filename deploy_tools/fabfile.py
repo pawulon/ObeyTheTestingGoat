@@ -42,7 +42,7 @@ def _update_virtualenv(source_folder):
 	virtualenv_folder = source_folder + '/../virtualenv'
 	if not exists(virtualenv_folder + '/bin/pip'):
 		run('virtualenv --python=python3.4 %s' % (virtualenv_folder,))
-	run('%s/bin/pip install -r %s/requirements.txt' % (virutalenv_folder, source_folder))
+	run('%s/bin/pip install -r %s/requirements.txt' % (virtualenv_folder, source_folder))
 
 def _update_static_files(source_folder):
 	run('cd %s && ../virtualenv/bin/python manage.py collectstatic --noinput' % (source_folder,))
