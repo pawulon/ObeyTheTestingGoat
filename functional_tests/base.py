@@ -8,7 +8,7 @@ class FunctionalTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):   
         dir = os.path.dirname(__file__)
-        self.chromedriver_path = os.path.join(dir, 'chromedriver.exe')    
+        cls.chromedriver_path = os.path.join(dir, 'chromedriver.exe')    
         for arg in sys.argv:
             if 'liveserver' in arg:
                 cls.is_live_server = True
@@ -29,7 +29,11 @@ class FunctionalTest(StaticLiveServerTestCase):
     
     def tearDown(self):        
         self.browser.quit()
-
+    
+    def restart_browser(self):
+        self.tearDown()
+        self.setUp()
+        
     def check_for_row_in_list_table(self, searched_text):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
