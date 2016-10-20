@@ -5,26 +5,24 @@ from django.template.loader import render_to_string
 from django.utils.html import escape
 from lists.views import home_page
 from lists.models import Item, List
+from lists.forms import ItemForm
 import re
 
 class HomePageTest(TestCase):
 
+    maxDiff = None
+
     def remove_csrf_token_from_response(self, response):
-        return re.sub('<input type=\'hidden\' name=\'csrfmiddlewaretoken\'.*/>', '', response)
-    
-    def test_root_url_resolved_to_home_page_view(self):
-        found = resolve('/')
-        self.assertEqual(found.func, home_page)
+        return re.sub('<input type=\'hidden\' name=\'csrfmiddlewaretoken\'.*/>', '', response)       
 
-    def test_home_page_returns_correct_html(self):
-        request = HttpRequest()
+    def test_home_page_renders_home_template(self):
+        response = self.client.get('/')
+        self.assertTemplateUsed(response, 'home.html')
         
-        response = home_page(request)
-        response = self.remove_csrf_token_from_response(response.content.decode())        
+    def test_home_page_uses_item_form(self):
+        response = self.client.get('/')
+        self.assertIsInstance(response.context['form'], ItemForm)        
         
-        expected_html = render_to_string('home.html')        
-        self.assertEqual(response, expected_html)                   
-
 class NewListTest(TestCase):
     
     def test_saving_a_POST_request(self):
