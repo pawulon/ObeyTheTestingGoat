@@ -4,9 +4,9 @@ from lists.models import Item, List
        
 class ListAndItemModelTest(TestCase):
     
-    def save_item(self, item_text, list):
+    def save_item(self, text, list):
         item = Item()
-        item.text = item_text
+        item.text = text
         item.list = list
         item.save()        
         

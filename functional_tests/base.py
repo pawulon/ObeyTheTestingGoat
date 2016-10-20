@@ -33,6 +33,9 @@ class FunctionalTest(StaticLiveServerTestCase):
     def restart_browser(self):
         self.tearDown()
         self.setUp()
+    
+    def get_item_input_box(self):
+        return self.browser.find_element_by_id('id_text')
         
     def check_for_row_in_list_table(self, searched_text):
         table = self.browser.find_element_by_id('id_list_table')
