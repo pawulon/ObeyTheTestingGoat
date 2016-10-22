@@ -38,4 +38,4 @@ class ExistingListItemForm(ItemForm):
             self._update_errors(e)
             
     def save(self):
-        return forms.models.ModelForm.save(0)
+        return forms.models.ModelForm.save(self)

@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from django.utils.html import escape
 from lists.views import home_page
 from lists.models import Item, List
-from lists.forms import (ItemForm, ExistingListItemForm)
+from lists.forms import (ExistingListItemForm, ItemForm)
 from lists.forms import (EMPTY_ITEM_ERROR, DUPLICATE_ITEM_ERROR)
 import re
 
