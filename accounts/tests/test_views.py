@@ -1,5 +1,6 @@
 from django.test import TestCase
 from unittest.mock import patch
+from accounts.models import Token
 import accounts
 
 class SendLoginEmailViewTest(TestCase):
@@ -18,3 +19,32 @@ class SendLoginEmailViewTest(TestCase):
         self.assertEqual(subject, 'Your login link for Superlists')
         self.assertEqual(from_email, 'noreply@superlists')
         self.assertEqual(to_list, ['pawel@pawel.com'])
+        
+    def test_adds_success_message(self):
+        response = self.client.post('/accounts/send_login_email', 
+                                    data={'email' : 'pawel@pawel.com'},
+                                    follow=True)
+        message = list(response.context['messages'])[0]
+        self.assertEqual(message.message, "Check your email, we've sent you a link you can use to log in.")
+        self.assertEqual(message.tags, "success")
+        
+    def test_creates_token_associated_with_email(self):
+        self.client.post('/accounts/send_login_email',
+                         data={'email' : 'pawel@pawel.com'})
+        token = Token.objects.first()
+        self.assertEqual(token.email, 'pawel@pawel.com')
+        
+    @patch('accounts.views.send_mail')
+    def test_sends_link_to_login_using_token_uid(self, mock_send_mail):
+        self.client.post('/accounts/send_login_email',
+                         data={'email' : 'pawel@pawel.com'})
+        token = Token.objects.first()
+        expected_url = 'http://testserver/accounts/login?token={uid}'.format(uid=token.uid)
+        (subject, body, from_email, to_list), kwargs = mock_send_mail.call_args
+        self.assertIn(expected_url, body)
+        
+class LoginViewTest(TestCase):
+    
+    def test_redirects_to_home_page(self):
+        response = self.client.get('/accounts/login?token=abcd123')
+        self.assertRedirects(response, '/')
