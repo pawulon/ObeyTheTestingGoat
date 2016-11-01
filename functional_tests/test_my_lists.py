@@ -5,6 +5,7 @@ from .base import FunctionalTest
 User = get_user_model()
 
 class MyListsTest(FunctionalTest):
+    
     def create_pre_authenticated_session(self, email):
         user = User.objects.create(email=email)
         session = SessionStore()
@@ -16,3 +17,12 @@ class MyListsTest(FunctionalTest):
         self.browser.add_cookie(dict(name=settings.SESSION_COOKIE_NAME,
                                      value=session.session_key,
                                      path='/',))
+                                     
+    def test_logged_in_users_lists_are_saved_as_my_lists(self):
+        email = 'pawel@pawel.com'
+        self.browser.get(self.server_url)
+        self.assert_logged_out(email)
+        
+        self.create_pre_authenticated_session(email)
+        self.browser.get(self.server_url)
+        self.assert_logged_in(email)
