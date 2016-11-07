@@ -12,7 +12,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         for arg in sys.argv:
             if 'liveserver' in arg:
                 cls.is_live_server = True
-                cls.server_url = 'http://' + arg.split('=')[1]
+                cls.server_url = 'http://' + arg.split('=')[1]                
                 return
         super().setUpClass()        
         cls.is_live_server = False
