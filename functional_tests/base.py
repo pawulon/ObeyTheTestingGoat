@@ -2,6 +2,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 import os
 import sys
+from .server_tools import reset_database
 
 class FunctionalTest(StaticLiveServerTestCase):
     
@@ -12,7 +13,8 @@ class FunctionalTest(StaticLiveServerTestCase):
         for arg in sys.argv:
             if 'liveserver' in arg:
                 cls.is_live_server = True
-                cls.server_url = 'http://' + arg.split('=')[1]                
+                cls.server_host = arg.split('=')[1]
+                cls.server_url = 'http://' + cls.server_host
                 return
         super().setUpClass()        
         cls.is_live_server = False
@@ -24,6 +26,8 @@ class FunctionalTest(StaticLiveServerTestCase):
             super().tearDownClass()
         
     def setUp(self):
+        if self.is_live_server:
+            reset_database(self.server_host)
         self.browser = webdriver.Chrome(self.chromedriver_path)
         self.browser.implicitly_wait(3)
     

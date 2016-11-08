@@ -3,21 +3,20 @@ from django.contrib.auth import BACKEND_SESSION_KEY, SESSION_KEY, get_user_model
 from django.contrib.sessions.backends.db import SessionStore
 from .base import FunctionalTest
 from .server_tools import create_session_on_server
-from .management.commands.create_session import
-create_pre_authenticated_session
+from .management.commands.create_session import create_pre_authenticated_session
 
 
 class MyListsTest(FunctionalTest):
     
     def create_pre_authenticated_session(self, email):
-        if self.against_staging:
+        if self.is_live_server:
             session_key = create_session_on_server(self.server_host, email)
         else:
             session_key = create_pre_authenticated_session(email)
         
         self.browser.get(self.server_url + '/404_no_such_url/')
         self.browser.add_cookie(dict(name=settings.SESSION_COOKIE_NAME,
-                                     value=session.session_key,
+                                     value=session_key,
                                      path='/',))
                                      
     def test_logged_in_users_lists_are_saved_as_my_lists(self):
