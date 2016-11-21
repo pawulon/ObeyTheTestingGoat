@@ -24,6 +24,9 @@ class ItemForm(forms.models.ModelForm):
         error_messages = {
             'text' : {'required' : EMPTY_ITEM_ERROR}
         }
+
+class NewListForm(object):
+    pass
         
 class ExistingListItemForm(ItemForm):
     def __init__(self, for_list, *args, **kwargs):
