@@ -22,7 +22,11 @@ def view_list(request, list_id):
 def new_list(request):
     form = NewListForm(data=request.POST)    
     if form.is_valid():
-        list_ = form.save(owner=request.user)
+        list_ = List()
+        if request.user.is_authenticated:            
+            list_.owner = request.user
+        list_.save()
+        form.save(for_list=list_)
         return redirect(list_)
     return render(request, 'home.html', {'form' : form})
     
