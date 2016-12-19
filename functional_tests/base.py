@@ -1,8 +1,12 @@
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 import os
 import sys
+import time
 from .server_tools import reset_database
+
+DEFAULT_WAIT = 5
 
 class FunctionalTest(StaticLiveServerTestCase):
     
@@ -35,7 +39,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         if self.is_live_server:
             reset_database(self.server_host)
         self.browser = webdriver.Chrome(self.chromedriver_path)
-        self.browser.implicitly_wait(3)
+        self.browser.implicitly_wait(DEFAULT_WAIT)
     
     def tearDown(self):        
         self.browser.quit()
@@ -61,3 +65,12 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.browser.find_elements_by_link_text('Log out')
         navbar = self.browser.find_element_by_css_selector('.navbar')
         self.assertNotIn(email, navbar.text)        
+        
+    def wait_for(self, function_with_assertion, timeout=DEFAULT_WAIT):
+        start_time = time.time()
+        while time.time() - start_time < timeout:
+            try:
+                return function_with_assertion()
+            except (AssertionError, WebDriverException):
+                time.sleep(0.1)
+        return function_with_assertion()
