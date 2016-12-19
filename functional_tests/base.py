@@ -9,7 +9,13 @@ class FunctionalTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):   
         dir = os.path.dirname(__file__)
-        cls.chromedriver_path = os.path.join(dir, 'chromedriver.exe')    
+        
+        if os.name == 'posix':                  # on linux
+            chromedriver_name = 'chromedriver'
+        else:                                   # on windows
+            chromedriver_name = 'chromedriver.exe'
+            
+        cls.chromedriver_path = os.path.join(dir, chromedriver_name)    
         for arg in sys.argv:
             if 'liveserver' in arg:
                 cls.is_live_server = True
